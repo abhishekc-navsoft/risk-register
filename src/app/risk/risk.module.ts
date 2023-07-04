@@ -96,6 +96,13 @@ const routes: Routes = [
                 (m) => m.createIndividualModule
               ),
           },
+          {
+            path: 'organization-users',
+            loadChildren: () =>
+              import('./organization-users/organization-users.module').then(
+                (m) => m.organizationUserModule
+              ),
+          },
         ],
       },
     ],

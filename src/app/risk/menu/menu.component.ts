@@ -43,7 +43,7 @@ export class MenuComponent implements OnInit {
     },
     {
       id: 6,
-      content: 'manage users',
+      content: 'manage organization users',
       icon: 'dashboard',
     },
     {
@@ -141,6 +141,17 @@ export class MenuComponent implements OnInit {
         break;
       case 'log out':
         this.openDialog(this.activeUser);
+        break;
+      case 'manage organization users':
+        const navigationExtrasTomanageOrganization: NavigationExtras = {
+          queryParams: {
+            type: 'organization-users',
+          },
+        };
+        this.router.navigate(
+          ['/organization-users'],
+          navigationExtrasTomanageOrganization
+        );
         break;
 
       default:
