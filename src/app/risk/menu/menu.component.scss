@@ -1,0 +1,26 @@
+::ng-deep .mat-drawer-content{
+    height: 100vh !important;
+}
+.sidebar_bg{
+    height: 100vh;
+        background:#36454F	!important;
+        // #c9d1d9
+        border-right: 1px solid #000000;
+}
+.height_home_compare_icon{
+    height: 60px;
+}
+.home_bg{
+    padding: 8px;
+        border-radius: 10px;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        background: #ffffff;
+        color:#36454F	!important;
+}
+// .sidebar_icon_bg{
+//     // font-size: 30px;
+// }
+.contentBg{
+    color: #ffffff;
+    font-weight: 600;
+}

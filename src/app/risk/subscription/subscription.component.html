@@ -1,0 +1,80 @@
+<section class="mgn-10">
+    <ng-container>
+        <header class="rr_header d-flex justify-content-between align-items-center pad-15" >
+            <div class="d-flex justify-content-between align-items-center gap-10">
+                <div>
+                    <img class="subscription_img" src="./assets/images/subscription.png" />
+                </div>
+                <div>
+                    <div class="header_txt">{{header | capitalizeFirstPipe}}</div>
+                    <div class="header_sub_txt">{{subHeader | capitalizeFirstPipe}}</div>
+                </div>
+            </div>
+            <div>
+                <button class="craete_hedaer_btn d-flex align-items-start justify-content-between" role="button"
+                    (click)="craeteSubscription()">
+                    <div><mat-icon>add</mat-icon>
+                    </div>
+                    <div>{{'Add Subscription' | translate}}</div>
+                </button>
+            </div>
+        </header>
+    </ng-container>
+    <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+    <ng-container *ngIf="subscriptionList && subscriptionList.length && subscriptionList.length === 0 && !api_loading">
+        <div>{{'Sorry you have no subscription list' | translate}}</div>
+    </ng-container>
+    <ng-container *ngIf="subscriptionList && subscriptionList.length && subscriptionList.length > 0 && !api_loading">
+        <section class="rr_header mgn-up-10 mgn-bt-10 custom_btn_header">
+            <div class="d-flex gap-10 align-items-center justify-content-start">
+                <button *ngFor="let actionHeader of tableActionBtnList" type="submit" role="button"
+                    class="table_action_btn align-items-center gap_5" (click)="actionPerformed(actionHeader)">
+                    <div class="d-flex align-items-center gap_5 ">
+                        <mat-icon class="btn_mat_haeder">{{actionHeader['icon']}}</mat-icon>
+                        <div class="btn_content">{{actionHeader['content']}}</div>
+                    </div>
+                </button>
+            </div>
+            <div>
+                <input (keyup)="applyFilter($event)"  id='myInput' type="search" placeholder="{{'Search' | translate}}" class="width_100 input_search_bar" />
+            </div>
+        </section>
+        <section>
+            <table id="myTable" class="width_100" >
+                <thead>
+                    <tr class="header"  id='tableHeader'>
+                        <th>
+                            <mat-checkbox [color]="color" value="{{allChecked}}"[checked]="allChecked" (change)="all(!allChecked)" 
+                            id="myCheck" [(indeterminate)]="indeterminate"></mat-checkbox>
+                        </th>
+                        <th>{{'Plan name' | translate}}</th>
+                        <th>{{'Plan description' | translate}}</th>
+                        <th>{{'Plan price' | translate}}</th>
+                        <th>{{'Plan status' | translate}}</th>
+                        <th>{{'No of risk allowded' | translate}}</th>
+                        <th>{{'Plan duration' |translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let subscription of subscriptionList;let i=index;" [ngClass]="{highlighted:subscription.checked }">
+                        <td>
+                            <mat-checkbox [color]="color" [checked]="subscription.checked" value="{{subscription}}" [(ngModel)]="subscription.checked"
+                            (change)="checkboxSelect(subscription,i)"></mat-checkbox>
+                        </td>
+                        <td *ngIf="subscription && subscription['plan_name']">{{subscription['plan_name'] |
+                            capitalizeFirstPipe}}
+                        </td>
+                        <td>{{subscription['plan_description'] ? subscription['plan_description'] :''}}</td>
+                        <td>{{subscription['price'] ? subscription['price']:0}}</td>
+                        <td>
+                            <span *ngIf="subscription['is_active'] && subscription['is_active']===true">Active</span>
+                            <span *ngIf="subscription['is_active'] && subscription['is_active']!==true">Inactive</span>
+                        </td>
+                        <td>{{subscription['no_of_risks_allowed'] ? subscription['no_of_risks_allowed']:''}}</td>
+                        <td>{{subscription['duration'] ? subscription['duration']:''}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </ng-container>
+</section>

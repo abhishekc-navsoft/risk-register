@@ -1,0 +1,23 @@
+$input-txt-color: #555;
+$input-text-focus: #495057;
+$input-text-border-focus: #3c8dbc;
+$input-text-background-focus: #fff;
+.form-control_new{
+    margin-bottom: 0px;
+    height: 45px;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: $input-txt-color;
+    background-image: none;
+    border-radius: 5.73504px;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 /8%);
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    border: 2px solid $input-txt-color;
+}
+.form-control_new:focus{
+    color: $input-text-focus;
+    background-color: $input-text-background-focus;
+    border-color: $input-text-border-focus;
+    outline: 0;
+    box-shadow: 0 0 0 $input-text-background-focus;
+}

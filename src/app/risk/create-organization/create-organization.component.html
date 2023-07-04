@@ -1,0 +1,222 @@
+<section class="mgn-10">
+    <ng-container>
+        <header class="rr_header d-flex justify-content-between align-items-center pad-15" >
+            <div class="d-flex justify-content-between align-items-center gap-10">
+                <div>
+                    <img class="subscription_img" src="/assets/images/organization.png" />
+                </div>
+                <div>
+                    <div class="header_txt">{{header | capitalizeFirstPipe}}</div>
+                    <div class="header_sub_txt">{{subHeader | capitalizeFirstPipe}}</div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center gap-10 action_btn_header_width">
+                <button class="cancel_btn" (click)="actionPerformed('back')">{{'Cancel' | translate}}</button>
+                <button class="save_btn" (click)="actionPerformed('formSubmit')">
+                    <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+                    <span *ngIf="!api_loading">{{btnAction | capitalizeFirstPipe}}</span>
+                </button>
+            </div>
+        </header>
+    </ng-container>
+    <ng-container>
+        <section class="mgn-up-10">
+            <div class="card">
+                <div class="subHeader_card_label">{{'Organization Information' | translate}}</div>
+                <!-- form start -->
+                <div class="mgn-up-10">
+                    <form [formGroup]="organizationForm">
+                        <div class="d-flex justify-content-start align-items-center flex_wrap">
+                            <!-- organization name start -->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Organization name' | translate}}</mat-label>
+                                    <input autocomplete="off" matInput
+                                        placeholder="{{'Enter organization name' | translate}}"
+                                        formControlName="organizationName" type="text">
+                                    <mat-error *ngIf="f.organizationName.errors?.required">{{'Please enter organization
+                                        name' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!----address start-->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Address details' | translate}}</mat-label>
+                                    <input autocomplete="off" matInput
+                                        placeholder="{{'Enter address details' | translate}}" formControlName="address"
+                                        type="text">
+                                    <mat-error *ngIf="f.address.errors?.required">{{'Please enter address details' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!----country start-->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Country' | translate}}</mat-label>
+                                    <input autocomplete="off" matInput
+                                        placeholder="{{'Select country details' | translate}}" formControlName="country"
+                                        type="text" [matAutocomplete]="countryName" (ngModelChange)="formFieldChange($event)" />
+                                    <mat-autocomplete #countryName="matAutocomplete" >
+                                        <mat-option *ngFor="let country of countryListOptions | async"
+                                            [value]="country['country_name']" (onSelectionChange)="selectedCountry(country,'country')">
+                                            {{country['country_name']}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                    <mat-error *ngIf="f.country.errors?.required">{{'Please select country name' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!--state start-->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'State' | translate}}</mat-label>
+                                    <input autocomplete="off" matInput placeholder="{{'Select state details' | translate}}" formControlName="state"
+                                        type="text" [matAutocomplete]="stateName" />
+                                    <mat-autocomplete #stateName="matAutocomplete">
+                                        <mat-option *ngFor="let state of stateListOptions | async" [value]="state['state_name']"
+                                            (onSelectionChange)="selectedCountry(state,'state')">
+                                            {{state['state_name']}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                    <mat-error *ngIf="f.state.errors?.required">{{'Please select state name' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!-- postal code start -->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Postal code' | translate}}</mat-label>
+                                    <input autocomplete="off" matInput
+                                        placeholder="{{'Enter postal code details' | translate}}"
+                                        formControlName="postalcode" type="number" minlength="0">
+                                    <mat-error *ngIf="f.postalcode.errors?.required">{{'Please enter postal code
+                                        details' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!-- employee range start -->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Employee range' | translate}}</mat-label>
+                                    <mat-select placeholder="{{'Enter employee range' | translate}}"
+                                        formControlName="empRange"
+                                        (selectionChange)="actionFormField('empRange',$event.value)">
+                                        <mat-option *ngFor="let empRange of empRangeList"
+                                            [value]="empRange['id']">{{empRange['emp_range']}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="f.empRange.errors?.required">{{'Please select employee range' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!--annual turnover strat-->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Annual turnover' | translate}}</mat-label>
+                                    <mat-select placeholder="{{'Enter annual turnover' | translate}}"
+                                        formControlName="annualTurnover"
+                                        (selectionChange)="actionFormField('industry',$event.value)">
+                                        <mat-option *ngFor="let turnover of turnoverlist"
+                                            [value]="turnover['id']">{{turnover['annual_turnover_range']}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="f.annualTurnover.errors?.required">{{'Please select annual
+                                        turnover' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!-- industry start -->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Industry' | translate}}</mat-label>
+                                    <mat-select placeholder="{{'Enter industry details' | translate}}"
+                                        formControlName="industry"
+                                        (selectionChange)="actionFormField('industry',$event.value)">
+                                        <mat-option *ngFor="let industry of industryList"
+                                            [value]="industry['id']">
+                                            {{industry['industry_name']}}
+                                        </mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="f.industry.errors?.required">{{'Please select industry details' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!-- profitable start -->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Profitable' | translate}}</mat-label>
+                                    <mat-select placeholder="{{'Enter profitable' | translate}}"
+                                        formControlName="profitable"
+                                        (selectionChange)="actionFormField('profitable',$event.value)">
+                                        <mat-option *ngFor="let profit of tempProfitableList"
+                                            [value]="profit['value']">{{profit['value'] |
+                                            capitalizeFirstPipe}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="f.profitable.errors?.required">{{'Please select profitable' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!-- export country depends on profitable dropdown-->
+                            <div class="form_ctrl form_ctrl_label_bg" *ngIf="isShown">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Export country' | translate}}</mat-label>
+                                    <mat-select placeholder="{{'Enter export country' | translate}}"
+                                        formControlName="exportCountry"
+                                        (selectionChange)="actionFormField('exportCountry',$event.value)">
+                                        <mat-option *ngFor="let expCountry of exportCountryList"
+                                            [value]="expCountry['id']">{{expCountry['country_name']}}</mat-option>
+                                    </mat-select>
+                                    <mat-error *ngIf="f.exportCountry.errors?.required">{{'Please select user type' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div
+                            class="d-flex justify-content-between align-items-center gap-10 action_btn_header_width pull_right">
+                            <button class="cancel_btn" (click)="actionPerformed('back')">{{'Cancel' |
+                                translate}}</button>
+                            <button class="save_btn" (click)="actionPerformed('formSubmit')">
+                                <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+                                <span *ngIf="!api_loading">{{btnAction | capitalizeFirstPipe}}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </ng-container>
+</section>
+
+
+
+<h4>Basic mat-select</h4>
+
+
+    
+
+
+<ul>
+    <ng-template #recursiveList let-list>
+        <!-- <li *ngFor="let item of list">
+            {{item.industry_name}}
+            
+            <ul *ngIf="item.child && item.child.length > 0">
+                <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.child }"></ng-container>
+            </ul>
+        </li> -->
+        <mat-select  >
+            <mat-option *ngFor="let item of list" >
+                <span>{{item.industry_name}}</span>
+                <span *ngIf="item.child && item.child.length > 0">
+                   
+                    <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.child }"></ng-container>
+                </span>
+            </mat-option>
+            
+        </mat-select>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: industryList }"></ng-container>
+</ul>
+
+
+
+

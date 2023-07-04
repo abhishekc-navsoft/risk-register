@@ -1,0 +1,35 @@
+<!-- <app-loading-spinner></app-loading-spinner>
+<mat-spinner></mat-spinner> -->
+<section class="">
+    <div class="d-flex align-items-center">
+        <div class="">
+            <img src="./assets/images/Artboard1copy3.png" />
+        </div>
+        <!-- login field start -->
+        <div class="col-lg-4 pad-10">
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                <div class="form-group grid">
+                    <label>{{email_label | translate}}</label>
+                    <input type="text" formControlName="email" class="form-control_new"
+                        [ngClass]="{ 'is-invalid': submitted && f.email.errors }" autocomplete="off" />
+                    <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                        <div *ngIf="f.email.errors.required">{{email_req | translate}}</div>
+                        <div *ngIf="f.email.errors.email">{{email_validation_msg| translate}}</div>
+                    </div>
+                </div>
+                <div class="form-group mgn-up-20 grid">
+                    <label>{{pasword_label | translate}}</label>
+                    <input type="password" formControlName="password" class="form-control_new"
+                        [ngClass]="{ 'is-invalid': submitted && f.password.errors }" (ngModelChange)="validatePasswordField(registerForm.controls.password.value)" autocomplete="off" />
+                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                        <div *ngIf="f.password.errors.required">{{pass_req | translate}}</div>
+                        <div *ngIf="f.password.errors.minlength">{{pass_validation_msg | translate}}</div>
+                    </div>
+                </div>
+                <div class="form-group mgn-up-10">
+                    <button class="btn btn-primary logInBtn"  mat-flat-button color="primary" [disabled]="!registerForm.valid">{{login_btn | translate}}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,186 @@
+<section class="mgn-10">
+    <ng-container>
+        <header class="rr_header d-flex justify-content-between align-items-center pad-15" *ngIf="header">
+            <div class="d-flex justify-content-between align-items-center gap-10">
+                <div>
+                    <img class="subscription_img" src="./assets/images/organization.png" />
+                </div>
+                <div>
+                    <div class="header_txt">{{header | capitalizeFirstPipe}}</div>
+                    <div class="header_sub_txt">{{subHeader | capitalizeFirstPipe}}</div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center gap-10">
+                <div>
+                    <button class="craete_hedaer_btn d-flex align-items-center" mat-button (click)="toggleShow()">Filter
+                        <mat-icon>filter_list</mat-icon></button>
+                </div>
+                <div>
+                    <button class="craete_hedaer_btn d-flex align-items-center" mat-button
+                        [matMenuTriggerFor]="menu">Add
+                        <mat-icon>add</mat-icon></button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item *ngFor="let user of userList" (click)="addOrganization(user)">
+                            <div *ngIf="user['user_type']">
+                                <img class="orga_join_img" src="{{user['img']}}" />
+                                <span class="user_type">{{user['user_type'] | capitalizeFirstPipe}}</span>
+                            </div>
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </header>
+    </ng-container>
+    <ng-container>
+        <div id="mySidenav" class="sidenav pad-20" *ngIf="filterapplied">
+            <div class="d-flex gap-10 align-items-center justify-content-between">
+                <button (click)="closeFilter()" role="button" class="cancel_btn">{{'close' | translate}}</button>
+                <button role="button" class="save_btn" (click)="applyFilter(searchOrganizationForm.value)">{{'Save' |
+                    translate}}</button>
+            </div>
+            <div>
+                <form class="example-form" [formGroup]="searchOrganizationForm">
+                    <div>
+                        <mat-form-field class="example-full-width example-full-width-mgn" appearance="outline">
+                            <mat-label>{{'Address' | translate}}</mat-label>
+                            <input type="text" placeholder="Select address" matInput [matAutocomplete]="address"
+                                formControlName="address">
+                            <mat-autocomplete #address="matAutocomplete">
+                                <mat-option *ngFor="let address of addressOptions | async" [value]="address"
+                                    (onSelectionChange)="actionPerformedSearch(address)">
+                                    {{address | capitalizeFirstPipe}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <!----plan start search-->
+                    <div>
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>{{'Plan name' | translate}}</mat-label>
+                            <input type="text" placeholder="Select plan" matInput [matAutocomplete]="plan"
+                                formControlName="planSearch"
+                                (ngModelChange)="actionPerformedSearch(searchOrganizationForm.controls.planSearch.value)">
+                            <mat-autocomplete #plan="matAutocomplete">
+                                <mat-option *ngFor="let planInfo of planOptions | async" [value]="planInfo"
+                                    (onSelectionChange)="actionPerformedSearch(planInfo)">
+                                    {{planInfo | capitalizeFirstPipe}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                    <!-- account status start -->
+                    <div>
+                        <mat-form-field appearance="outline" class="example-full-width">
+                            <mat-label>{{'Select account status' |translate}}</mat-label>
+                            <mat-select formControlName="accountStatus" placeholder="Select account status"
+                                (ngModelChange)="actionPerformedSearch(searchOrganizationForm.controls.accountStatus.value)">
+                                <mat-option value="true">{{'True' | translate}}</mat-option>
+                                <mat-option value="false">{{'False' | translate}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </ng-container>
+    <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+    <ng-container *ngIf="organizationList && organizationList.length && organizationList.length === 0 && !api_loading">
+        <div>{{'Sorry you have no organization list' | translate}}</div>
+    </ng-container>
+    <ng-container *ngIf="organizationList && organizationList.length && organizationList.length > 0 && !api_loading">
+        <section class="rr_header mgn-up-10 mgn-bt-10 custom_btn_header">
+            <div class="d-flex gap-10 align-items-center justify-content-start">
+                <button *ngFor="let actionHeader of tableActionBtnList" type="submit" role="button"
+                    class="table_action_btn align-items-center gap_5" (click)="actionPerformed(actionHeader)">
+                    <div class="d-flex align-items-center gap_5 ">
+                        <mat-icon class="btn_mat_haeder">{{actionHeader['icon']}}</mat-icon>
+                        <div class="btn_content">{{actionHeader['content']}}</div>
+                    </div>
+                </button>
+            </div>
+            <div>
+                <input type="text" (keyup)="applySearch($event)" placeholder="{{'Search' | translate}}"
+                    class="width_100 input_search_bar" id='myInput' autocomplete="off" />
+            </div>
+        </section>
+        <section>
+            <table id='myTable' class="width_100" matSort (matSortChange)="sortData($event)">
+                <thead>
+                    <tr class="header" id='tableHeader'>
+                        <th>
+                            <mat-checkbox [color]="color" value="{{allChecked}}" [checked]="allChecked"
+                                (change)="all(!allChecked)" id="myCheck"
+                                [(indeterminate)]="indeterminate"></mat-checkbox>
+                        </th>
+                        <th>{{'Status' | translate}}</th>
+                        <th mat-sort-header="name">{{'Organization Name' | translate}}</th>
+                        <th mat-sort-header="address">{{'Address' | translate}}</th>
+                        <th mat-sort-header="country_id__country_name">{{'Country' | translate}}</th>
+                        <th mat-sort-header="state_id__state_name">{{'State' | translate}}</th>
+                        <th mat-sort-header="export_country__country_name">{{'Export Country' | translate}}</th>
+                        <th mat-sort-header="industry__industry_name">{{'Indusrty' |translate}}</th>
+                        <th>{{'Annual Turnover' |translate}}</th>
+                        <th>{{'Plan' | translate}}</th>
+                        <th>{{'Plan date' |translate}}</th>
+                        <th mat-sort-header="user_type__user_type">{{'User Type' |translate}}</th>
+                        <th>{{'Head' | translate}}</th>
+                        <th>{{'Postal code' | translate}}</th>
+                        <th>{{'User email' | translate}}</th>
+                        <th>{{'User name' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let organization of organizationList | paginate: { itemsPerPage: filter['page_count'], currentPage: p };let i=index;"
+                        [ngClass]="{highlighted:organization.checked }">
+                        <td>
+                            <mat-checkbox [color]="color" [checked]="organization.checked" value="{{organization}}"
+                                [(ngModel)]="organization.checked"
+                                (change)="checkboxSelect(organization,i)"></mat-checkbox>
+                        </td>
+                        <td *ngIf="organization['acct_status']">{{'True' | translate}}</td>
+                        <td *ngIf="!organization['acct_status']">{{'False' | translate}}</td>
+                        <td *ngIf="organization && organization['name']">{{organization['name'] | capitalizeFirstPipe}}
+                        </td>
+                        <td>{{(organization['address'] | capitalizeFirstPipe)? (organization['address'] |
+                            capitalizeFirstPipe):''}}</td>
+                        <td>{{(organization['country_id__country_name'] | capitalizeFirstPipe) ?
+                            (organization['country_id__country_name'] | capitalizeFirstPipe):''}}
+                        </td>
+                        <td>{{(organization['state_id__state_name'] | capitalizeFirstPipe) ?
+                            (organization['state_id__state_name'] | capitalizeFirstPipe):''}}</td>
+                        <td>{{(organization['export_country__country_name'] | capitalizeFirstPipe) ?
+                            (organization['export_country__country_name'] | capitalizeFirstPipe):''}}</td>
+                        <td>{{(organization['industry__industry_name'] | capitalizeFirstPipe) ?
+                            (organization['industry__industry_name'] | capitalizeFirstPipe):''}}
+                        </td>
+                        <td>{{organization['annual_turnover__annual_turnover_range'] ?
+                            organization['annual_turnover__annual_turnover_range']:''}}</td>
+                        <td>{{(organization['plan_id__plan_name'] | translate) ? (organization['plan_id__plan_name'] |
+                            translate):'Free'}}</td>
+                        <td>
+                            <span>{{organization['plan_start_date'] ?(organization['plan_start_date'] + '
+                                to'):''}}</span>
+                            <span>{{organization['plan_end_date'] ? organization['plan_end_date']:''}}</span>
+                        </td>
+                        <td>{{(organization['user_type__user_type'] | capitalizeFirstPipe) ?
+                            (organization['user_type__user_type'] | capitalizeFirstPipe):''}}</td>
+                        <td>{{(organization['head'] | capitalizeFirstPipe) ? (organization['head'] |
+                            capitalizeFirstPipe):''}}</td>
+                        <td>{{organization['postal_code'] ? organization['postal_code']:''}}</td>
+                        <td>{{organization['user_id__email'] ? organization['user_id__email']:''}}</td>
+                        <td>
+                            <span>{{(organization['user_id__first_name'] | capitalizeFirstPipe)
+                                ?(organization['user_id__first_name'] | capitalizeFirstPipe):''}}</span>
+                            <span>{{' '}}</span>
+                            <span>{{(organization['user_id__last_name'] | capitalizeFirstPipe) ?
+                                (organization['user_id__last_name'] | capitalizeFirstPipe):''}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div *ngIf="organizationList && organizationList.length && organizationList.length > 5">
+                <pagination-controls (pageChange)="p = $event" class="pagination"></pagination-controls>
+            </div>
+        </section>
+    </ng-container>
+</section>

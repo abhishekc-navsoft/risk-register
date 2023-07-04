@@ -1,0 +1,50 @@
+<section>
+    <header class="rr_header d-flex justify-content-between align-items-center pad-20">
+        <div class="header_txt">{{header | capitalizeFirstPipe}}</div>
+    </header>
+</section>
+<section class="mgn-10">
+    <!-- (ngSubmit)="onSubmitRegionMaster(registerForm['value'])" -->
+    <form [formGroup]="registerForm" >
+        <!-- country code start -->
+        <div class="d-flex justify-content-start align-items-center">
+            <div class="form_ctrl form_ctrl_countryCode">
+                <mat-form-field appearance="outline">
+                    <mat-label>{{organizationCountryCode | translate}}</mat-label>
+                    <input matInput placeholder="{{organizationCountryCode}}" formControlName="organizationCountryCode" type="text"
+                        [matAutocomplete]="countryCode">
+                    <mat-autocomplete autoActiveFirstOption #countryCode="matAutocomplete">
+                        <mat-option *ngFor="let option of countryCodeListInfo | async" [value]="option['number']">
+                            {{option['number']}}
+                        </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="f.organizationCountryCode.errors?.required">{{organizationCounryCodeValidation |
+                        translate}}</mat-error>
+                </mat-form-field>
+            </div>
+            <!-- country name start -->
+            <div class="form_ctrl_country_name">
+                <mat-form-field appearance="outline">
+                    <mat-label>{{organizationCountryName | translate}}</mat-label>
+                    <input matInput placeholder="{{organizationCountryName}}" formControlName="organizationCountryName" type="text"
+                        [matAutocomplete]="countryName" />
+                    <mat-autocomplete autoActiveFirstOption #countryName="matAutocomplete">
+                        <mat-option *ngFor="let option of countryNameListInfo | async" [value]="option['name']">
+                            {{option['name']}}
+                        </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="f.organizationCountryName.errors?.required">{{organizationCountrynameValidation |
+                        translate}}</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="region_submit_btn">
+            <button type="submit"  class="filter_btn" (click)="onSubmitRegionMaster()">
+                <span>
+                    <span *ngIf="!api_loading">Submit</span>
+                    <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+                </span>
+            </button>
+        </div>
+    </form>
+</section>

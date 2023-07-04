@@ -1,0 +1,19 @@
+.is-invalid{
+    color: red;
+}
+.form_ctrl_country_name{
+    width: 100%;
+        margin-left: -80px;
+}
+.form_ctrl_countryCode{
+    width: 15%;
+}
+::ng-deep .form_ctrl_country_name .mat-form-field{
+    width: 30% !important;
+}
+::ng-deep .form_ctrl_countryCode .mat-form-field{
+    width: 65% !important;
+}
+.region_submit_btn{
+    width: 10%;
+}

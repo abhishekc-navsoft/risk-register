@@ -1,0 +1,16 @@
+.subscription_img {
+    width: 35px;
+}
+
+.subHeader_card_label {
+    border-bottom: 1px solid #6e6e6e;
+    height: 40px;
+}
+
+.form_ctrl_label_bg {
+    width: 25%;
+}
+
+::ng-deep .form_ctrl_label_bg .mat-form-field {
+    width: 95% !important;
+}

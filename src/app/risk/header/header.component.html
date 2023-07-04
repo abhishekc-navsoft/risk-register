@@ -1,0 +1,27 @@
+<section class="toolbar_body">
+    <mat-toolbar class="mat_toolbar_body">
+        <div class="d-flex justify-content-between align-items-center width_100">
+            <div class="d-flex justify-content-start align-items-center">
+                <div>
+                    <img class="risk_register_img" src="./assets/images/Artboard1copy3.png" />
+                </div>
+                <div class="body_txt" *ngIf="header">{{header | translate}}</div>
+            </div>
+            <div class="d-flex gap-20 align-items-center justify-content-between">
+                <div>
+                    <img matTooltip="Subscription Plan" class="rr_licenece_img cursor-pointer"
+                        src="./assets/images/licence.png" />
+                </div>
+                <div>
+                    <mat-icon matBadge="{{notifications_count}}" [matBadgeHidden]="hidden" matBadgeColor="warn"
+                        matTooltip="Alerts" class="cursor-pointer alert_bg">notifications</mat-icon>
+                </div>
+                <div class="d-flex gap-10 align-items-center justify-content-between cursor-pointer"
+                    *ngIf="activeUser_user_name && activeUser_email" matTooltip="{{activeUser_email}}" (click)="openDialog(activeUserGlobal)">
+                    <div class="rr_user">{{activeUser_user_name | capitalizeFirstPipe}}</div>
+                    <div class="rr_user_bg" *ngIf="activeUser_user_name && activeUser_user_name[0] ">{{activeUser_user_name[0] | capitalizeFirstPipe}}</div>
+                </div>
+            </div>
+        </div>
+    </mat-toolbar>
+</section>

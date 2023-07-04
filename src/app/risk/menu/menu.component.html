@@ -1,0 +1,19 @@
+<section class="sidebar_bg">
+    <div class="d-flex justify-content-between pad-10 cursor-pointer height_home_compare_icon">
+        <div class="home_bg" (click)="actionPerformed('dashboard')">
+            <mat-icon>home</mat-icon>
+        </div>
+    </div>
+    <div class="sidebar_content_bg" *ngFor="let sideBar of sidebarMenuJSON" (click)="actionPerformed(sideBar)">
+        <div class="d-flex justify-content-between pad-10 cursor-pointer">
+            <div class="d-flex gap-10">
+                <div><mat-icon class="sidebar_icon_bg" [ngClass]="{'contentBg': (urlType===sideBar['content'])}">{{sideBar['icon']}}</mat-icon></div>
+                <div class="sidebar_content" [ngClass]="{'contentBg': (urlType===sideBar['content'])}">
+                    {{sideBar['content'] | capitalizeFirstPipe}}
+                </div>
+            </div>
+            <div><mat-icon [ngClass]="{'contentBg': (urlType===sideBar['content'])}">keyboard_arrow_right</mat-icon></div>
+        </div>
+
+    </div>
+</section>

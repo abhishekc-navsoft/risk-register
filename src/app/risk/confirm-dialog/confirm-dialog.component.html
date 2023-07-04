@@ -1,0 +1,49 @@
+<ng-container *ngIf="data && data['requestType'] && data['requestType']==='logout'">
+    <div>
+        <!-- <div>
+            <img src="/assets/images/on-off-button.png" />
+        </div> -->
+        <h4 class="text-center">{{'Hi' | translate}} {{data['userDetails']['user_name'] | capitalizeFirstPipe}}</h4>
+        <h5 class="text-center">Are you sure you want to logout ?</h5>
+        <div class="d-flex justify-content-center align-items-center gap-10 mgn-up-20">
+                <button class="cancel_btn" type="submit" role="button" (click)="closeDialog()" mat-dialog-close>Cancel</button>
+                <button class="save_btn" type="submit" role="button"(click)="saveDialog()" [mat-dialog-close]="true">Save</button>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="data && data['requestType'] && data['requestType']==='subscriptionListDelete'">
+    <div>
+        <h5 class="text-center">Are you sure you want to delete ?</h5>
+        <div class="d-flex justify-content-center align-items-center gap-10 mgn-up-20">
+            <button class="cancel_btn" type="submit" role="button" (click)="closeDialog()" mat-dialog-close>Cancel</button>
+            <button class="save_btn" type="submit" role="button" (click)="saveDialogAction('yes','delete')" [mat-dialog-close]="true">Save</button>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="data && data['requestType'] && data['requestType']==='organizationListDelete'">
+    <div>
+        <h5 class="text-center">Are you sure you want to delete ?</h5>
+        <div class="d-flex justify-content-center align-items-center gap-10 mgn-up-20">
+            <button class="cancel_btn" type="submit" role="button" (click)="closeDialog()"
+                mat-dialog-close>Cancel</button>
+            <button class="save_btn" type="submit" role="button" (click)="saveDialogAction('yes','delete')"
+                [mat-dialog-close]="true">Save</button>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="data && data['requestType'] && data['requestType']==='organizationListStatus'">
+    <div>
+        <h5 class="text-center">Are you sure you want to change status ?</h5>
+        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group" [(ngModel)]="selectedStatus">
+            <mat-radio-button class="example-radio-button" *ngFor="let status of statusList" [value]="status['content']" (click)="statusChange(status)">
+                <h6>{{status['content']}}</h6>
+            </mat-radio-button>
+        </mat-radio-group>
+        <div class="d-flex justify-content-center align-items-center gap-10 mgn-up-20">
+            <button class="cancel_btn" type="submit" role="button" (click)="closeDialog()"
+                mat-dialog-close>Cancel</button>
+            <button class="save_btn" type="submit" role="button" (click)="saveDialogActionStatus('yes','status')"
+                >Save</button>
+        </div>
+    </div>
+</ng-container>

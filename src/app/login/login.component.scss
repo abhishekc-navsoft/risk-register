@@ -1,0 +1,9 @@
+*{
+    box-sizing: border-box;
+}
+.is-invalid{
+    border: 1px solid red !important;
+}
+.btn:disabled {
+    cursor: not-allowed !important;
+}

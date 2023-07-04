@@ -1,0 +1,92 @@
+.subscription_img {
+    width: 40px;
+}
+
+.btn_mat_haeder {
+    font-size: 18px;
+}
+
+.btn_content {
+    font-size: 14px;
+    color: #232323;
+    font-weight: 400;
+}
+
+.table_action_btn {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    outline: none;
+    background: #fff;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.custom_btn_header {
+    border-bottom: none !important;
+    box-shadow: none !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.orga_join_img {
+    height: 20px;
+
+}
+
+.user_type {
+    font-size: 16px;
+    font-weight: 400;
+    margin-left: 10px;
+}
+
+.sidenav {
+    height: 100%;
+    width: 20%;
+    position: fixed;
+    z-index: 1;
+    right: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+}
+
+// .sidenav a:hover {
+//     color: #f1f1f1;
+// }
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+
+    .sidenav a {
+        font-size: 18px;
+    }
+}
+
+.example-full-width {
+    width: 100% !important;
+    // margin-top: 15px;
+}
+.example-full-width-mgn{
+    margin-top: 10px;
+}

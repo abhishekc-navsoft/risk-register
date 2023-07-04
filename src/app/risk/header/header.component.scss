@@ -1,0 +1,57 @@
+$whiteColor: #ffffff;
+
+.example-spacer {
+    flex: 1 1 auto;
+}
+
+.toolbar_body {
+    border: none;
+    width: 100%;
+}
+
+.body_txt {
+    color: $whiteColor;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.risk_register_img {
+    height: 65px;
+    width: 135px;
+    object-fit: cover
+}
+
+.rr_licenece_img {
+    height: 40px;
+    width: 40px;
+}
+
+::ng-deep .mat-toolbar {
+    background: #36454F !important;
+}
+
+.rr_user_bg {
+    border: 1px solid $whiteColor;
+    width: 40px;
+    text-align: center;
+    background-color: $whiteColor;
+    height: 40px;
+    border-radius: 5px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.rr_user {
+    color: $whiteColor;
+    font-size: 16px;
+    font-weight: 600;
+}
+.alert_bg{
+    color: $whiteColor;
+}
+::ng-deep .mat-badge-content{
+    color: #000000 !important;
+        background: $whiteColor !important;
+        border: none;
+        outline: none;
+}

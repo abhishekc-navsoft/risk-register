@@ -1,0 +1,18 @@
+.cancel_btn{
+    padding: 8px;
+        width: 25%;
+        outline: none;
+        border: none;
+        color: #6e6e6e;
+        border-radius: 5px;
+}
+.save_btn{
+    width: 25%;
+}
+.example-radio-group{
+    display: flex;
+        justify-content: center;
+        margin: 10px;
+        gap: 20px;
+        align-items: center;
+}
