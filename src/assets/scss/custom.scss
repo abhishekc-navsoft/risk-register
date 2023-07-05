@@ -350,6 +350,7 @@ input::-webkit-inner-spin-button {
 
 #myTable tr {
     border-bottom: 1px solid #ddd;
+    cursor: pointer;
 }
 
 #myTable tr.header,
@@ -378,4 +379,26 @@ background: #36454F;
 }
 .pagination .ngx-pagination a:hover{
     background: none;
+}
+.subscription_img{
+    width: 40px;
+    height: 40px;
+}
+.mat-sort-header-container{
+    justify-content: center !important;
+}
+.inner_table_row{
+    border: none !important;
+}
+.text-center{
+    text-align: center;
+}
+.text-left{
+    text-align: left;
+}
+.text-right{
+    text-align: right;
+}
+table{
+        border: 1px solid #ddd;
 }

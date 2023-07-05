@@ -555,6 +555,11 @@ export class sharedService {
       }
       if (!isFound && tr[i].className !== 'header') {
         tr[i].style.display = 'none';
+        console.log(' isFound', isFound);
+        const error: string = 'Not found !!';
+        this.snackbarService.OpenSnackBar(error, {
+          panelClass: 'snackbarerror',
+        });
       }
     }
   }

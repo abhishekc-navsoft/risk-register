@@ -20,6 +20,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { OrganizationUserlistComponent } from './organization-users.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 const routes: Routes = [
   {
@@ -41,6 +43,8 @@ const routes: Routes = [
     MatMenuModule,
     MatSortModule,
     NgxPaginationModule,
+    MatCheckboxModule,
+    MatExpansionModule,
   ],
   exports: [OrganizationUserlistComponent],
   declarations: [OrganizationUserlistComponent],

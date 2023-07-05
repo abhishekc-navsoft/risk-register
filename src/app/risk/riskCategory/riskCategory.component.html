@@ -1,0 +1,68 @@
+<section class="mgn-10">
+    <ng-container>
+        <header class="rr_header d-flex justify-content-between align-items-center pad-15">
+            <div class="d-flex justify-content-between align-items-center gap-10">
+                <div>
+                    <img class="subscription_img" src="/assets/images/category.png" />
+                </div>
+                <div>
+                    <div class="header_txt">{{header | capitalizeFirstPipe}}</div>
+                    <div class="header_sub_txt">{{subHeader | capitalizeFirstPipe}}</div>
+                </div>
+            </div>
+        </header>
+    </ng-container>
+    <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+    <ng-container *ngIf="categoryListInfo && categoryListInfo.length && categoryListInfo.length === 0 && !api_loading">
+        <div>{{'Sorry you have no organization list' | translate}}</div>
+    </ng-container>
+    <ng-container *ngIf="categoryListInfo && categoryListInfo.length && categoryListInfo.length > 0 && !api_loading">
+        <section class="rr_header mgn-up-10 mgn-bt-10 custom_btn_header">
+            <div class="d-flex gap-10 align-items-center justify-content-start">
+                <button *ngFor="let actionHeader of tableActionBtnList" type="submit" role="button"
+                    class="table_action_btn align-items-center gap_5" (click)="actionPerformed(actionHeader)">
+                    <div class="d-flex align-items-center gap_5 ">
+                        <mat-icon class="btn_mat_haeder">{{actionHeader['icon']}}</mat-icon>
+                        <div class="btn_content">{{actionHeader['content']}}</div>
+                    </div>
+                </button>
+            </div>
+            <div>
+                <input type="text" (keyup)="applySearch($event)" placeholder="{{'Search' | translate}}"
+                    class="width_100 input_search_bar" id='myInput' autocomplete="off" />
+            </div>
+        </section>
+        <section>
+            <table id='myTable' class="width_100" matSort (matSortChange)="sortData($event)">
+                <thead>
+                    <tr class="header" id='tableHeader'>
+                        <th>
+                            <mat-checkbox [color]="color" value="{{allChecked}}" [checked]="allChecked"
+                                (change)="all(!allChecked)" id="myCheck" [(indeterminate)]="indeterminate"></mat-checkbox>
+                        </th>
+                        <th>{{'Status' | translate}}</th>
+                        <th mat-sort-header="category_name">{{'Category Name' | translate}}</th>
+                        <th mat-sort-header="category_description">{{'Category Description' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let organization of categoryListInfo | paginate: { itemsPerPage: filter['page_count'], currentPage: p };let i=index;"
+                        [ngClass]="{highlighted:organization.checked }">
+                        <td>
+                            <mat-checkbox [color]="color" [checked]="organization.checked" value="{{organization}}"
+                                [(ngModel)]="organization.checked" (change)="checkboxSelect(organization,i)"></mat-checkbox>
+                        </td>
+                        <td *ngIf="organization && organization['category_name']">{{organization['category_name'] | capitalizeFirstPipe}}
+                        </td>
+                        <td>{{(organization['category_description'] | capitalizeFirstPipe) ?
+                            (organization['category_description'] | capitalizeFirstPipe):''}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div *ngIf="categoryListInfo && categoryListInfo.length && categoryListInfo.length > 5">
+                <pagination-controls (pageChange)="p = $event" class="pagination"></pagination-controls>
+            </div>
+        </section>
+    </ng-container>
+    </section>
