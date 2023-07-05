@@ -15,6 +15,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { projectConstantLocal } from 'src/app/constants/project_constant/project-constantLocal';
 import { Sort } from '@angular/material/sort';
 import { ThemePalette } from '@angular/material/core';
+import { MatDialog } from '@angular/material/dialog';
+import { confirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-riskCategory',
@@ -38,11 +40,11 @@ export class riskcategoryComponent implements OnInit {
       content: 'Delete',
       icon: 'delete',
     },
-    {
-      id: 3,
-      content: 'Status',
-      icon: 'lock',
-    },
+    // {
+    //   id: 3,
+    //   content: 'Status',
+    //   icon: 'lock',
+    // },
   ];
   color: ThemePalette = 'primary';
   allChecked: boolean = false;
@@ -56,7 +58,7 @@ export class riskcategoryComponent implements OnInit {
     page: 1,
   };
   p: any = 1;
-  checkboxSelectValueList: any;
+  checkboxSelectValueList: any = [];
   constructor(
     private localstorageservice: LocalStorageService,
     private riskService: riskService,
@@ -66,7 +68,8 @@ export class riskcategoryComponent implements OnInit {
     private location: Location,
     private sharedService: sharedService,
     private formBuilder: FormBuilder,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private dialog: MatDialog
   ) {
     this.queryParamsFn();
   }
@@ -120,7 +123,9 @@ export class riskcategoryComponent implements OnInit {
   }
   actionPerformed(actionHeader: any) {
     console.log('actionheader', actionHeader);
-    if (
+    if (actionHeader && actionHeader === 'create') {
+      this.actionPerformCreate();
+    } else if (
       actionHeader &&
       actionHeader['content'] &&
       actionHeader['content'] === 'Delete'
@@ -140,9 +145,132 @@ export class riskcategoryComponent implements OnInit {
       this.actionPerformedStatus(actionHeader);
     }
   }
+  actionPerformCreate() {
+    const navigationExtrasToAddCategory: NavigationExtras = {
+      queryParams: {
+        type: 'addCategory',
+        action: 'create',
+      },
+    };
+    this.router.navigate(['/addRiskCategory'], navigationExtrasToAddCategory);
+  }
   actionPerformedStatus(actionHeader: any) {}
-  actionPerformedEdit(actionHeader: any) {}
-  actionPerformedDelete(actionHeader: any) {}
+  actionPerformedEdit(actionHeader: any) {
+    if (
+      this.checkboxSelectValueList &&
+      this.checkboxSelectValueList.length &&
+      this.checkboxSelectValueList.length === 1
+    ) {
+      let dataToSend: any;
+      for (let i = 0; i < this.checkboxSelectValueList.length; i++) {
+        dataToSend = {
+          category_name: this.checkboxSelectValueList[i]['category_name'],
+          category_description:
+            this.checkboxSelectValueList[i]['category_description'],
+          id: this.checkboxSelectValueList[i]['id'],
+        };
+      }
+      console.log('dataToSend', dataToSend);
+      const navigationExtrasToOrganization: NavigationExtras = {
+        queryParams: {
+          type: 'addCategory',
+          action: 'edit',
+          dataToSend: JSON.stringify(dataToSend),
+        },
+      };
+      this.router.navigate(
+        ['/addRiskCategory'],
+        navigationExtrasToOrganization
+      );
+    } else {
+      const error: string =
+        projectConstantLocal.TABLE_ACTION_VALIDATION + ' edit';
+      this.snackbarService.OpenSnackBar(error, {
+        panelClass: 'snackbarerror',
+      });
+    }
+  }
+  actionPerformedDelete(data: any) {
+    if (
+      this.checkboxSelectValueList &&
+      this.checkboxSelectValueList.length &&
+      this.checkboxSelectValueList.length > 0
+    ) {
+      this.dialogConfirmation(
+        this.checkboxSelectValueList,
+        'categoryListDelete'
+      );
+    } else {
+      const error: string =
+        projectConstantLocal.SUBSCRIPTION_TABLE_ACTION_VALIDATION + ' delete';
+      this.snackbarService.OpenSnackBar(error, {
+        panelClass: 'snackbarerror',
+      });
+    }
+  }
+  dialogConfirmation(value: any, txt: string) {
+    console.log('value from checkbox', value);
+    console.log('txt', txt);
+    const dialogRef = this.dialog.open(confirmDialogComponent, {
+      width: '650px',
+      data: {
+        requestType: txt,
+        categoryDetails: value,
+      },
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      console.log('result', result);
+      if (
+        result &&
+        result['confirmation'] &&
+        result['confirmation'] === 'yes'
+      ) {
+        if (
+          result &&
+          result['actionValue'] &&
+          result['actionValue'] === 'delete'
+        ) {
+          if (
+            result &&
+            result['ids'] &&
+            result['ids'].length &&
+            result['ids'].length > 0
+          ) {
+            this.api_loading = true;
+            console.log(result['ids']);
+            const post_body = {
+              ids: result['ids'],
+            };
+            this.deleteAction(post_body).then((afterRes: any) => {
+              console.log('afterRes', afterRes);
+              if (
+                afterRes &&
+                afterRes['status'] &&
+                afterRes['status'] === 200
+              ) {
+                this.categoryListInIt();
+                this.api_loading = false;
+              }
+            });
+          }
+        }
+      }
+    });
+  }
+  deleteAction(post_body: any) {
+    const _this = this;
+    return new Promise((resolve, reject) => {
+      _this.riskService.categoryDelete(post_body).subscribe(
+        (res: any) => {
+          resolve(res);
+        },
+        (error: any) => {
+          reject(error);
+          this.api_loading = false;
+        }
+      );
+    });
+  }
   applySearch(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     console.log('filterValue', filterValue);

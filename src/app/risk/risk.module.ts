@@ -110,6 +110,13 @@ const routes: Routes = [
                 (m) => m.riskCategoryModule
               ),
           },
+          {
+            path: 'addRiskCategory',
+            loadChildren: () =>
+              import('./addRiskCategory/addriskcategory.module').then(
+                (m) => m.riskAddCategoryModule
+              ),
+          },
         ],
       },
     ],

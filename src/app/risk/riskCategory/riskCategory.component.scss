@@ -1,0 +1,22 @@
+.btn_content {
+    font-size: 14px;
+    color: #232323;
+    font-weight: 400;
+}
+
+.table_action_btn {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    outline: none;
+    background: #fff;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.custom_btn_header {
+    border-bottom: none !important;
+    box-shadow: none !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}

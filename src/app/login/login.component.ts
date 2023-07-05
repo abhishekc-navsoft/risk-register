@@ -99,12 +99,6 @@ export class loginComponent implements OnInit {
               panelClass: 'snackbarnormal',
             }
           );
-          // const message = this.lStorageSErvice.setItemLocalStorage(
-          //   'currentUser',
-          //   afterRes
-          // );
-          // console.log('message in login service', message);
-          // this.lStorageSErvice.getItemFromLocalStorage('currentUser');
           const navigationExtrasToDashboard: NavigationExtras = {
             queryParams: {
               type: 'dashboard',

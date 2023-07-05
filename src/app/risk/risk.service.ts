@@ -53,6 +53,13 @@ export class riskService {
       this.httpOptions
     );
   }
+  postStateData(body: any) {
+    return this.http.post(
+      base_url + 'superadmin/state/',
+      body,
+      this.httpOptions
+    );
+  }
   getSubscriptionList(body?: any) {
     const httpoptions = {
       headers: new HttpHeaders({
@@ -185,5 +192,29 @@ export class riskService {
   }
   getCategoryData() {
     return this.http.get(base_url + 'superadmin/category/', this.httpOptions);
+  }
+  craeteCategory(body: any) {
+    return this.http.post(
+      base_url + 'superadmin/category/',
+      body,
+      this.httpOptions
+    );
+  }
+  editCategory(body: any) {
+    return this.http.put(
+      base_url + 'superadmin/category/',
+      body,
+      this.httpOptions
+    );
+  }
+  categoryDelete(body: any) {
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        Authorization: `Token ${this.activeUser['token']}`,
+      }),
+      body: body,
+    };
+    return this.http.delete(base_url + 'superadmin/category/', options);
   }
 }

@@ -17,7 +17,7 @@ import { sharedService } from 'src/app/constants/shared_services/shared-services
   styleUrls: ['./regionmaster.component.scss'],
 })
 export class RegionMasterComponent implements OnInit {
-  registerForm: any;
+  countryForm: any;
   submitted: boolean = false;
   organizationCountryName: string =
     projectConstantLocal['ORGANIZATION_COUNTRY_MSG_PLACEHOLDER'];
@@ -27,13 +27,24 @@ export class RegionMasterComponent implements OnInit {
     projectConstantLocal['ORGANIZATION_COUNTRY_CODE'];
   organizationCounryCodeValidation: string =
     projectConstantLocal['ORGANIZATION_COUNTRY_CODE_VALIDATION'];
-  countryCodeList: any[] = this.sharedService['COUNTRY_JSON'];
-  countryNameList: any[] = this.sharedService['COUNTRY_JSON'];
+  countryCodeList: any = []; //this.sharedService['COUNTRY_JSON'];
+  countryNameList: any = []; //this.sharedService['COUNTRY_JSON'];
   countryCodeListInfo: any;
   countryNameListInfo: any;
   header: string = 'Region Master';
+  subHeader: string = 'Region information';
   api_loading: boolean = false;
   color: any = '#ffffff';
+  countryList: any;
+  bCountryFormInit: boolean = true;
+
+  //stae form variable
+  stateForm: any;
+  bStateFormInit: boolean = false;
+  stateNameList: any = [];
+  stateNameListInfo: any;
+  selectedstateid: any;
+  api_loading_state: boolean = false;
   constructor(
     private localstorageservice: LocalStorageService,
     private formBuilder: FormBuilder,
@@ -44,16 +55,19 @@ export class RegionMasterComponent implements OnInit {
     private riskService: riskService
   ) {}
   ngOnInit(): void {
+    this.activeUserInfo();
+    this.InitFormGroup();
+    this.InitFormGroupAsState();
+    this.translateInit();
+    this.getCountryDetailsInit();
+    // this.countryCodeListFilter();
+    // this.countryNameListFilter();
+  }
+  activeUserInfo() {
     const activeUser =
       this.localstorageservice.getItemFromLocalStorage('currentUser');
     console.log('activeUser in region master', activeUser);
-    this.InitFormGroup();
-    this.translateInit();
-    this.countryCodeListFilter();
-    this.countryNameListFilter();
-    this.getCountryDetails();
   }
-
   translateInit() {
     let language: any;
     language =
@@ -62,65 +76,117 @@ export class RegionMasterComponent implements OnInit {
     this.translate.setDefaultLang(language);
     this.translate.use(language);
   }
-  get f() {
-    return this.registerForm.controls;
+  get country() {
+    return this.countryForm.controls;
+  }
+  get state() {
+    return this.stateForm.controls;
   }
   InitFormGroup() {
-    this.registerForm = this.formBuilder.group({
+    this.countryForm = this.formBuilder.group({
       organizationCountryCode: ['', [Validators.required]],
       organizationCountryName: ['', [Validators.required]],
-      organizationState: ['', [Validators.required]],
+    });
+  }
+  InitFormGroupAsState() {
+    this.stateForm = this.formBuilder.group({
+      organizationStateName: ['', [Validators.required]],
     });
   }
   countryCodeListFilter() {
-    this.countryCodeListInfo = this.registerForm
+    this.countryCodeListInfo = this.countryForm
       .get('organizationCountryCode')
       .valueChanges.pipe(
         startWith(''),
         map((value: any) => this._filterCountryCode(value || ''))
       );
   }
-  private _filterCountryCode(value: any) {
+  _filterCountryCode(value: any) {
     const filterValue = value.toLowerCase();
     return this.countryCodeList.filter((option: any) =>
       option['number'].toLowerCase().includes(filterValue)
     );
   }
   countryNameListFilter() {
-    this.countryNameListInfo = this.registerForm
+    this.countryNameListInfo = this.countryForm
       .get('organizationCountryName')
       .valueChanges.pipe(
         startWith(''),
         map((value: any) => this._filterCountryName(value || ''))
       );
   }
-  private _filterCountryName(value: any) {
+  _filterCountryName(value: any) {
     const filterValue = value.toLowerCase();
-    return this.countryNameList.filter((option: any) =>
-      option['name'].toLowerCase().includes(filterValue)
+    return this.countryList.filter((option: any) =>
+      option['country_name'].toLowerCase().includes(filterValue)
     );
   }
-  onSubmitRegionMaster() {
+  formFieldState(data: any) {
+    console.log('data', data);
+    this.selectedstateid = data['id'];
+  }
+  onSubmitCountryDetails() {
     const post_data: any = {
-      country_name: this.registerForm.controls.organizationCountryName.value,
-      country_code: this.registerForm.controls.organizationCountryCode.value,
+      country_name: this.countryForm.controls.organizationCountryName.value,
+      country_code: this.countryForm.controls.organizationCountryCode.value,
     };
     this.api_loading = true;
-    let api_msg: any;
     this.countryDetailsPost(post_data).then((res: any) => {
+      console.log('res in country', res);
       if (res && res['status'] && res['status'] === 400) {
-        api_msg =
-          res['message'].charAt(0).toUpperCase() + res['message'].slice(1);
-        this.snackbarService.OpenSnackBar(api_msg, {
-          panelClass: 'snackbarerror',
-        });
-        this.registerForm.reset();
+        this.snackbarService.OpenSnackBar(
+          this.sharedService.firstLetterCapital(res['message']),
+          {
+            panelClass: 'snackbarerror',
+          }
+        );
+        this.countryForm.reset();
       } else {
-        this.snackbarService.OpenSnackBar(api_msg, {
-          panelClass: 'snackbarnormal',
-        });
+        const country_data_id: any = 3; //res['country_data_id']
+        this.getStateListInit(country_data_id);
+        this.snackbarService.OpenSnackBar(
+          this.sharedService.firstLetterCapital(res['message']),
+          {
+            panelClass: 'snackbarnormal',
+          }
+        );
       }
     });
+  }
+  onSubmitStateDetails() {
+    const post_data: any = {
+      state_name: this.stateForm.controls.organizationStateName.value,
+      country: this.selectedstateid,
+    };
+    this.api_loading = true;
+    this.stateDetailsPOst(post_data).then((res: any) => {
+      console.log('res in country', res);
+      if (res && res['status'] && res['status'] === 400) {
+        this.snackbarService.OpenSnackBar(
+          this.sharedService.firstLetterCapital(res['message']),
+          {
+            panelClass: 'snackbarerror',
+          }
+        );
+        this.countryForm.reset();
+      } else {
+        const country_data_id: any = res['country_data_id']; //3;
+        this.getStateListInit(country_data_id);
+        this.snackbarService.OpenSnackBar(
+          this.sharedService.firstLetterCapital(res['message']),
+          {
+            panelClass: 'snackbarnormal',
+          }
+        );
+      }
+    });
+  }
+  onSubmitRegionMaster(txt: any) {
+    if (txt && txt === 'country') {
+      this.onSubmitCountryDetails();
+    } else if (txt && txt === 'state') {
+      this.onSubmitStateDetails();
+    }
   }
   countryDetailsPost(post_data: any) {
     const _this = this;
@@ -137,12 +203,92 @@ export class RegionMasterComponent implements OnInit {
       );
     });
   }
+  stateDetailsPOst(post_data: any) {
+    const _this = this;
+    return new Promise((resolve, reject) => {
+      _this.riskService.postStateData(post_data).subscribe(
+        (res: any) => {
+          resolve(res);
+        },
+        (error: any) => {
+          reject(error);
+        }
+      );
+    });
+  }
+  getCountryDetailsInit() {
+    this.getCountryDetails().then((response: any) => {
+      console.log('response country details', response);
+      if (
+        response &&
+        response['data'] &&
+        response['data'].length &&
+        response['data'].length > 0
+      ) {
+        this.countryList = response['data'];
+        console.log('this.countryList', this.countryList);
+        this.countryNameListFilter();
+      }
+    });
+  }
   getCountryDetails() {
     const _this = this;
     return new Promise((resolve, reject) => {
-      _this.riskService.getCountryList().subscribe((res: any) => {
-        console.log(res);
-      });
+      _this.riskService.getCountryList().subscribe(
+        (res: any) => {
+          resolve(res);
+          console.log(res);
+        },
+        (error: any) => {
+          reject(error);
+        }
+      );
     });
+  }
+  getStateListInit(id: any) {
+    this.getStateList(id).then((response: any) => {
+      console.log('response stae name', response);
+      this.bStateFormInit = true;
+      this.disableCountryForm();
+      this.stateNameList = response['data'];
+      this.stateNameListFilter();
+      this.api_loading_state = false;
+    });
+  }
+  stateNameListFilter() {
+    this.stateNameListInfo = this.stateForm
+      .get('organizationStateName')
+      .valueChanges.pipe(
+        startWith(''),
+        map((value: any) => this._filterStateName(value || ''))
+      );
+  }
+  _filterStateName(value: any) {
+    const filterValue = value.toLowerCase();
+    return this.stateNameList.filter((option: any) =>
+      option['state_name'].toLowerCase().includes(filterValue)
+    );
+  }
+  getStateList(id: any) {
+    const _this = this;
+    return new Promise((resolve, reject) => {
+      _this.riskService.getStateList(id).subscribe(
+        (res: any) => {
+          console.log('res state', res);
+          resolve(res);
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    });
+  }
+  disableCountryForm() {
+    this.countryForm.controls.organizationCountryName.disable();
+    this.countryForm.controls.organizationCountryCode.disable();
+  }
+  enableCountryForm() {
+    this.countryForm.controls.organizationCountryName.enable();
+    this.countryForm.controls.organizationCountryCode.enable();
   }
 }

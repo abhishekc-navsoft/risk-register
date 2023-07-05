@@ -85,4 +85,15 @@ export class confirmDialogComponent implements OnInit {
       this.dialogRef.close(post_data);
     }
   }
+  saveDialogActionCategory(txt: string, action: string) {
+    for (let i = 0; i < this.data['categoryDetails'].length; i++) {
+      this.selectedIds.push(this.data['categoryDetails'][i]['id']);
+    }
+    const post_data: any = {
+      confirmation: txt,
+      actionValue: action,
+      ids: this.selectedIds,
+    };
+    this.dialogRef.close(post_data);
+  }
 }

@@ -1,0 +1,68 @@
+<section class="mgn-10">
+    <ng-container>
+        <header class="rr_header d-flex justify-content-between align-items-center pad-15">
+            <div class="d-flex justify-content-between align-items-center gap-10">
+                <div>
+                    <img class="subscription_img" src="/assets/images/category.png" />
+                </div>
+                <div>
+                    <div class="header_txt">{{header | capitalizeFirstPipe}}</div>
+                    <div class="header_sub_txt">{{subHeader | capitalizeFirstPipe}}</div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center gap-10 action_btn_header_width">
+                <button class="cancel_btn" (click)="actionPerformed('back')">{{'Cancel' | translate}}</button>
+                <button class="save_btn" (click)="actionPerformed('formSubmit')">
+                    <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+                    <span *ngIf="!api_loading">{{btnAction | capitalizeFirstPipe}}</span>
+                </button>
+            </div>
+        </header>
+    </ng-container>
+    <ng-container>
+        <section class="mgn-up-10">
+            <div class="card">
+                <div class="subHeader_card_label">{{'Category Information' | translate}}</div>
+                <!-- form start -->
+                <div class="mgn-up-10">
+                    <form [formGroup]="categoryForm">
+                        <div >
+                            <!-- category name start -->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Category name' | translate}}</mat-label>
+                                    <input autocomplete="off" matInput
+                                        placeholder="{{'Enter category name' | translate}}"
+                                        formControlName="categoryName" type="text" value="">
+                                    <mat-error *ngIf="f.categoryName.errors?.required">{{'Please enter category
+                                        name' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                            <!----categoryDes start-->
+                            <div class="form_ctrl form_ctrl_label_bg">
+                                <mat-form-field appearance="outline">
+                                    <mat-label>{{'Category details' | translate}}</mat-label>
+                                    <textarea autocomplete="off" #message class="custom_textrea" matInput
+                                        placeholder="{{'Enter category details' | translate}}" formControlName="categoryDes" type="text"
+                                        (keyup)="autoGrowTextarea($event)"></textarea>
+                                    <mat-error *ngIf="f.categoryDes.errors?.required">{{'Please enter category details' |
+                                        translate}}</mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div
+                            class="d-flex justify-content-between align-items-center gap-10 action_btn_header_width pull_right">
+                            <button class="cancel_btn" (click)="actionPerformed('back')">{{'Cancel' |
+                                translate}}</button>
+                            <button class="save_btn" (click)="actionPerformed('formSubmit')">
+                                <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+                                <span *ngIf="!api_loading">{{btnAction | capitalizeFirstPipe}}</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </ng-container>
+    </section>

@@ -47,3 +47,14 @@
         </div>
     </div>
 </ng-container>
+<ng-container *ngIf="data && data['requestType'] && data['requestType']==='categoryListDelete'">
+    <div>
+        <h5 class="text-center">Are you sure you want to delete ?</h5>
+        <div class="d-flex justify-content-center align-items-center gap-10 mgn-up-20">
+            <button class="cancel_btn" type="submit" role="button" (click)="closeDialog()"
+                mat-dialog-close>Cancel</button>
+            <button class="save_btn" type="submit" role="button" (click)="saveDialogActionCategory('yes','delete')"
+                [mat-dialog-close]="true">Save</button>
+        </div>
+    </div>
+</ng-container>

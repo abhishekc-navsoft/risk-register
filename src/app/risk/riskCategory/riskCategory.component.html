@@ -10,6 +10,12 @@
                     <div class="header_sub_txt">{{subHeader | capitalizeFirstPipe}}</div>
                 </div>
             </div>
+            <div class="d-flex justify-content-between align-items-center gap-10">
+                <div>
+                    <button class="craete_hedaer_btn d-flex align-items-center" mat-button (click)="actionPerformed('create')">{{'Add Category' | translate}}
+                        <mat-icon>add</mat-icon></button>
+                </div>
+            </div>
         </header>
     </ng-container>
     <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
@@ -17,7 +23,7 @@
         <div>{{'Sorry you have no organization list' | translate}}</div>
     </ng-container>
     <ng-container *ngIf="categoryListInfo && categoryListInfo.length && categoryListInfo.length > 0 && !api_loading">
-        <section class="rr_header mgn-up-10 mgn-bt-10 custom_btn_header">
+        <section class="d-flex justify-content-between align-items-center mgn-up-10 mgn-bt-10 custom_btn_header">
             <div class="d-flex gap-10 align-items-center justify-content-start">
                 <button *ngFor="let actionHeader of tableActionBtnList" type="submit" role="button"
                     class="table_action_btn align-items-center gap_5" (click)="actionPerformed(actionHeader)">
@@ -40,7 +46,7 @@
                             <mat-checkbox [color]="color" value="{{allChecked}}" [checked]="allChecked"
                                 (change)="all(!allChecked)" id="myCheck" [(indeterminate)]="indeterminate"></mat-checkbox>
                         </th>
-                        <th>{{'Status' | translate}}</th>
+                        <!-- <th>{{'Status' | translate}}</th> -->
                         <th mat-sort-header="category_name">{{'Category Name' | translate}}</th>
                         <th mat-sort-header="category_description">{{'Category Description' | translate}}</th>
                     </tr>
