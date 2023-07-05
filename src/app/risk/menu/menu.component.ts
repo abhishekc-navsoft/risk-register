@@ -23,7 +23,7 @@ export class MenuComponent implements OnInit {
     },
     {
       id: 2,
-      content: 'master settings',
+      content: 'category',
       icon: 'dashboard',
     },
     {
@@ -36,31 +36,31 @@ export class MenuComponent implements OnInit {
       content: 'regionmaster',
       icon: 'dashboard',
     },
-    {
-      id: 5,
-      content: 'industry master',
-      icon: 'dashboard',
-    },
-    {
-      id: 6,
-      content: 'manage organization users',
-      icon: 'dashboard',
-    },
+    // {
+    //   id: 5,
+    //   content: 'industry master',
+    //   icon: 'dashboard',
+    // },
+    // {
+    //   id: 6,
+    //   content: 'manage organization users',
+    //   icon: 'dashboard',
+    // },
     {
       id: 7,
       content: 'manage subscriptions',
       icon: 'dashboard',
     },
-    {
-      id: 8,
-      content: 'manage payments',
-      icon: 'dashboard',
-    },
-    {
-      id: 9,
-      content: 'craetre',
-      icon: 'dashboard',
-    },
+    // {
+    //   id: 8,
+    //   content: 'manage payments',
+    //   icon: 'dashboard',
+    // },
+    // {
+    //   id: 9,
+    //   content: 'craetre',
+    //   icon: 'dashboard',
+    // },
     {
       id: 10,
       content: 'log out',
@@ -142,16 +142,13 @@ export class MenuComponent implements OnInit {
       case 'log out':
         this.openDialog(this.activeUser);
         break;
-      case 'manage organization users':
-        const navigationExtrasTomanageOrganization: NavigationExtras = {
+      case 'category':
+        const navigationExtrasToCategory: NavigationExtras = {
           queryParams: {
-            type: 'organization-users',
+            type: 'category',
           },
         };
-        this.router.navigate(
-          ['/organization-users'],
-          navigationExtrasTomanageOrganization
-        );
+        this.router.navigate(['/riskCategory'], navigationExtrasToCategory);
         break;
 
       default:

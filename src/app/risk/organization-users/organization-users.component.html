@@ -1,1 +1,108 @@
-organizzation user sworking 
+<section class="mgn-10">
+    <ng-container>
+        <header class="rr_header d-flex justify-content-between align-items-center pad-15" *ngIf="header">
+            <div class="d-flex justify-content-between align-items-center gap-10">
+                <div>
+                    <img class="subscription_img" src="./assets/images/organization.png" />
+                </div>
+                <div>
+                    <div class="header_txt">{{header | capitalizeFirstPipe}}</div>
+                    <div class="header_sub_txt">{{subHeader | capitalizeFirstPipe}}</div>
+                </div>
+            </div>
+        </header>
+    </ng-container>
+    <app-loading-spinner *ngIf="api_loading"></app-loading-spinner>
+    <ng-container *ngIf="orgMemberList && orgMemberList.length && orgMemberList.length === 0 && !api_loading">
+        <div>{{'Sorry you have no member list' | translate}}</div>
+    </ng-container>
+    <ng-container *ngIf="orgMemberList && orgMemberList.length && orgMemberList.length > 0 && !api_loading">
+        <section class="pull_right mgn-up-10 mgn-bt-10 custom_btn_header">
+            <div>
+                <input type="text" (keyup)="applySearch($event)" placeholder="{{'Search' | translate}}"
+                    class="width_100 input_search_bar" id='myInput' autocomplete="off" />
+            </div>
+        </section>
+        <section>
+            <table id='myTable' class="width_100" matSort (matSortChange)="sortData($event)">
+                <thead>
+                    <tr class="header" id='tableHeader'>
+                        <!-- <th>
+                            <mat-checkbox [color]="color" value="{{allChecked}}" [checked]="allChecked"
+                                (change)="all(!allChecked)" id="myCheck"
+                                [(indeterminate)]="indeterminate"></mat-checkbox>
+                        </th> -->
+                        <th>{{'Status' | translate}}</th>
+                        <th mat-sort-header="organization_id__name">{{'Organization Name' | translate}}</th>
+                        <th>{{'Member name' | translate}}</th>
+                        <th mat-sort-header="user_id__email">{{'Member email' | translate}}</th>
+                        <th mat-sort-header="user_id__user_details__phone_number">{{'Phone number' | translate}}</th>
+                        <th>{{'Action' | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container
+                        *ngFor="let member of orgMemberList | paginate: { itemsPerPage: filter['page_count'], currentPage: p };let i=index;">
+                        <tr [ngClass]="{highlighted:member.checked }" (click)="member.isExpand = !member.isExpand">
+                            <!-- <td>
+                                                <mat-checkbox [color]="color" [checked]="member.checked" value="{{member}}"
+                                                    [(ngModel)]="member.checked"
+                                                    (change)="checkboxSelect(member,i)"></mat-checkbox>
+                                            </td> -->
+                            <td *ngIf="member && member['acct_status']">
+                                {{member['acct_status'] | capitalizeFirstPipe}}
+                            </td>
+
+                            <td *ngIf="member && member['organization_id__name']">
+                                {{member['organization_id__name'] | capitalizeFirstPipe}}
+                            </td>
+                            <td>
+                                <span>{{(member['user_id__first_name'] | capitalizeFirstPipe)
+                                    ?(member['user_id__first_name'] | capitalizeFirstPipe):''}}</span>
+                                <span>{{' '}}</span>
+                                <span>{{(member['user_id__last_name'] | capitalizeFirstPipe) ?
+                                    (member['user_id__last_name'] | capitalizeFirstPipe):''}}</span>
+                            </td>
+                            <td>{{member['user_id__email'] ? member['user_id__email']:''}}</td>
+                            <td>{{(member['user_id__user_details__phone_number'] | capitalizeFirstPipe) ?
+                                (member['user_id__user_details__phone_number'] | capitalizeFirstPipe):''}}
+                            </td>
+                            <td
+                                *ngIf="member && member['risk_details'] && member['risk_details'].length && member['risk_details'].length>0">
+                                <mat-icon *ngIf="!member.isExpand">keyboard_arrow_down</mat-icon>
+                                <mat-icon *ngIf="member.isExpand">keyboard_arrow_up</mat-icon>
+                            </td>
+                        </tr>
+                        <tr
+                            *ngIf="member && member.isExpand && member['risk_details'] && member['risk_details'].length && member['risk_details'].length>0">
+                            <td colspan="6">
+                                <h5 class="text-left">{{'Risk details'}}</h5>
+                                <table class="table table-sm">
+                                    <thead class="inner_table_head">
+                                        <th>{{'Title' | translate}}</th>
+                                        <th>{{'Description' | translate}}</th>
+                                        <th>{{'Category' | translate}}</th>
+                                        <th>{{'likelihood' | translate}}</th>
+                                        <th>{{'Impact' | translate}}</th>
+                                    </thead>
+                                    <tbody *ngIf="member && member['risk_details']">
+                                        <tr *ngFor="let risk of member['risk_details']" claas="inner_table_row">
+                                            <td>{{risk['risk_title'] ? risk['risk_title']:''}}</td>
+                                            <td>{{risk['risk_description'] ? risk['risk_description']:''}}</td>
+                                            <td>{{risk['risk_category'] ? risk['risk_category']:''}}</td>
+                                            <td>{{risk['likelihood'] ? risk['likelihood']:''}}</td>
+                                            <td>{{risk['impact'] ? risk['impact']:''}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+            <div *ngIf="orgMemberList && orgMemberList.length && orgMemberList.length > 5">
+                <pagination-controls (pageChange)="p = $event" class="pagination"></pagination-controls>
+            </div>
+        </section>
+    </ng-container>
+</section>

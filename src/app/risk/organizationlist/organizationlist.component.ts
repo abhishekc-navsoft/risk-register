@@ -45,6 +45,11 @@ export class OrganizationlistComponent implements OnInit {
       content: 'Status',
       icon: 'lock',
     },
+    {
+      id: 4,
+      content: 'Members',
+      icon: 'group',
+    },
   ];
   allChecked: boolean = false;
   indeterminate: boolean = false;
@@ -270,6 +275,12 @@ export class OrganizationlistComponent implements OnInit {
       actionHeader['content'] === 'Status'
     ) {
       this.actionPerformedStatus(actionHeader);
+    } else if (
+      actionHeader &&
+      actionHeader['content'] &&
+      actionHeader['content'] === 'Members'
+    ) {
+      this.actionPerformedMembers(actionHeader);
     }
   }
   actionPerformedDelete(data: any) {
@@ -398,6 +409,39 @@ export class OrganizationlistComponent implements OnInit {
       const error: string =
         projectConstantLocal.SUBSCRIPTION_TABLE_ACTION_VALIDATION +
         ' status change';
+      this.snackbarService.OpenSnackBar(error, {
+        panelClass: 'snackbarerror',
+      });
+    }
+  }
+  actionPerformedMembers(data: any) {
+    if (
+      this.checkboxSelectValueList &&
+      this.checkboxSelectValueList.length &&
+      this.checkboxSelectValueList.length === 1
+    ) {
+      let dataToSend: any;
+      for (let i = 0; i < this.checkboxSelectValueList.length; i++) {
+        dataToSend = {
+          acct_status: this.checkboxSelectValueList[i]['acct_status'],
+          id: this.checkboxSelectValueList[i]['id'],
+        };
+      }
+      console.log('dataToSend', dataToSend);
+      const navigationExtrasToIndividual: NavigationExtras = {
+        queryParams: {
+          type: 'organization-users',
+          action: 'edit',
+          dataToSend: JSON.stringify(dataToSend),
+        },
+      };
+      this.router.navigate(
+        ['/organization-users'],
+        navigationExtrasToIndividual
+      );
+    } else {
+      const error: string =
+        projectConstantLocal.TABLE_ACTION_VALIDATION + ' member list';
       this.snackbarService.OpenSnackBar(error, {
         panelClass: 'snackbarerror',
       });

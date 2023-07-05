@@ -177,15 +177,13 @@ export class riskService {
       this.httpOptions
     );
   }
-
-  // http://192.168.3.50:8001/superadmin/organization_getupdate/?page_size=5&page_number=1&plan_id=free&acct_status=false&address=Salanpur
-  // http://192.168.3.50:8000/superadmin/organization_getupdate/?[object%20Object]
-
-  // filterOrganizationData(body:any) {
-  //   // plan_id = free;
-  //   return this.http.get(
-  //     base_url + 'superadmin/organization_getupdate/?' + 'search=' + body,
-  //     this.httpOptions
-  //   );
-  // }
+  orgMemberList(orgId: any) {
+    return this.http.get(
+      base_url + 'organization/memberlist/?organization_id=' + orgId,
+      this.httpOptions
+    );
+  }
+  getCategoryData() {
+    return this.http.get(base_url + 'superadmin/category/', this.httpOptions);
+  }
 }

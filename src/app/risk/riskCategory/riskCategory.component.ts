@@ -1,32 +1,53 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Injectable, OnInit, ViewChild } from '@angular/core';
+import { Location } from '@angular/common';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import { riskService } from '../risk.service';
-import { SnackbarService } from 'src/app/snackbar/snackbar.service';
 import { LocalStorageService } from 'src/app/constants/storage/local-storage.service';
+import { SnackbarService } from 'src/app/snackbar/snackbar.service';
+import { riskService } from '../risk.service';
 import { sharedService } from 'src/app/constants/shared_services/shared-services';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import { projectConstantLocal } from 'src/app/constants/project_constant/project-constantLocal';
-import { MatDialog } from '@angular/material/dialog';
-import { confirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { Sort } from '@angular/material/sort';
 import { ThemePalette } from '@angular/material/core';
 
 @Component({
-  selector: 'app-organization-users',
-  templateUrl: './organization-users.component.html',
-  styleUrls: ['./organization-users.component.scss'],
+  selector: 'app-riskCategory',
+  templateUrl: './riskCategory.component.html',
+  styleUrls: ['./riskCategory.component.scss'],
 })
-export class OrganizationUserlistComponent implements OnInit {
+export class riskcategoryComponent implements OnInit {
   type: any;
   header: string = '';
   subHeader: string = '';
+  categoryListInfo: any;
   api_loading: boolean = false;
-  organizationId: number = 0;
-  organizationInfo: any;
-  orgMemberList: any;
+  tableActionBtnList: any = [
+    {
+      id: 1,
+      content: 'Edit',
+      icon: 'edit',
+    },
+    {
+      id: 2,
+      content: 'Delete',
+      icon: 'delete',
+    },
+    {
+      id: 3,
+      content: 'Status',
+      icon: 'lock',
+    },
+  ];
   color: ThemePalette = 'primary';
   allChecked: boolean = false;
   indeterminate: boolean = false;
-  checkboxSelectValueList: any = [];
+  perPage = projectConstantLocal.PERPAGING_LIMIT;
   filter = {
     address: '',
     planName: '',
@@ -35,15 +56,17 @@ export class OrganizationUserlistComponent implements OnInit {
     page: 1,
   };
   p: any = 1;
-  bExpansionPanel: boolean = false;
+  checkboxSelectValueList: any;
   constructor(
+    private localstorageservice: LocalStorageService,
     private riskService: riskService,
     private snackbarService: SnackbarService,
     private router: Router,
     private activated_router: ActivatedRoute,
-    private localstorageservice: LocalStorageService,
+    private location: Location,
     private sharedService: sharedService,
-    private dialog: MatDialog
+    private formBuilder: FormBuilder,
+    private translate: TranslateService
   ) {
     this.queryParamsFn();
   }
@@ -52,110 +75,94 @@ export class OrganizationUserlistComponent implements OnInit {
       console.log('qparams', qparams);
       if (qparams && qparams['type'] && qparams['type']) {
         this.type = qparams['type'];
-        console.log('type', this.type);
-        this.header = 'Members';
-        this.subHeader = 'Members List';
-        this.organizationInfo = JSON.parse(qparams['dataToSend']);
-        if (this.organizationInfo && this.organizationInfo['id']) {
-          const orgaId: any = 44; //this.organizationInfo['id'];
-          const acct_status: any = this.organizationInfo['acct_status'];
-          this.orgMemberListInit(orgaId, acct_status);
-        }
+        this.header = 'Category';
+        this.subHeader = 'category list';
       }
     });
   }
   ngOnInit(): void {
     this.activeUserFromLStorage();
+    this.categoryListInIt();
   }
   activeUserFromLStorage() {
     const activeUser =
       this.localstorageservice.getItemFromLocalStorage('currentUser');
     console.log('activeUser', activeUser);
   }
-  orgMemberListInit(id: any, acct_status: any) {
-    this.orgMemberLists(id).then((response: any) => {
-      console.log('response member', response);
+  categoryListInIt() {
+    this.categoryList().then((response: any) => {
+      console.log('response category', response);
       if (
         response &&
         response['data'] &&
         response['data'].length &&
         response['data'].length > 0
       ) {
-        this.orgMemberList = response['data'];
-        this.orgMemberList = this.orgMemberList.map((m: any) => ({
-          ...m,
-          isExpand: false,
-          acct_status: acct_status,
-        }));
-        this.orgMemberList = this.orgMemberList.slice();
+        this.categoryListInfo = response['data'];
         this.api_loading = false;
       }
-      //   else {
-      //     this.orgMemberList = [];
-      //   }
     });
   }
-  orgMemberLists(id: number) {
+  categoryList() {
     const _this = this;
     _this.api_loading = true;
     return new Promise((resolve, reject) => {
-      _this.riskService.orgMemberList(id).subscribe(
+      _this.riskService.getCategoryData().subscribe(
         (res: any) => {
           resolve(res);
         },
         (error: any) => {
           reject(error);
-          _this.api_loading = false;
+          this.api_loading = false;
         }
       );
     });
   }
+  actionPerformed(actionHeader: any) {
+    console.log('actionheader', actionHeader);
+    if (
+      actionHeader &&
+      actionHeader['content'] &&
+      actionHeader['content'] === 'Delete'
+    ) {
+      this.actionPerformedDelete(actionHeader);
+    } else if (
+      actionHeader &&
+      actionHeader['content'] &&
+      actionHeader['content'] === 'Edit'
+    ) {
+      this.actionPerformedEdit(actionHeader);
+    } else if (
+      actionHeader &&
+      actionHeader['content'] &&
+      actionHeader['content'] === 'Status'
+    ) {
+      this.actionPerformedStatus(actionHeader);
+    }
+  }
+  actionPerformedStatus(actionHeader: any) {}
+  actionPerformedEdit(actionHeader: any) {}
+  actionPerformedDelete(actionHeader: any) {}
   applySearch(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     console.log('filterValue', filterValue);
     this.sharedService.tableSearch();
-    // this.riskService
-    //   .searchOrganizationData(filterValue)
-    //   .subscribe((res: any) => {
-    //     console.log('res', res);
-    //     if (
-    //       res &&
-    //       res['data'] &&
-    //       res['data'].length &&
-    //       res['data'].length > 0
-    //     ) {
-    //       this.orgMemberList = res['data'];
-    //     } else {
-    //       this.snackbarService.OpenSnackBar(
-    //         projectConstantLocal['SEARCH_ERROR'],
-    //         {
-    //           panelClass: 'snackbarerror',
-    //         }
-    //       );
-    //     }
-    //   });
   }
   sortData(sort: Sort) {
-    const data = this.orgMemberList.slice();
+    const data = this.categoryListInfo.slice();
     if (!sort.active || sort.direction === '') {
-      this.orgMemberList = data;
+      this.categoryListInfo = data;
       return;
     }
-    this.orgMemberList = data.sort((a: any, b: any) => {
+    this.categoryListInfo = data.sort((a: any, b: any) => {
       const isAsc = sort.direction === 'asc';
       switch (sort.active) {
-        case 'organization_id__name':
+        case 'category_name':
+          return this.compare(a['category_name'], b['category_name'], isAsc);
+        case 'category_description':
           return this.compare(
-            a['organization_id__name'],
-            b['organization_id__name'],
-            isAsc
-          );
-        case 'user_id__email':
-          return this.compare(a['user_id__email'], b['user_id__email'], isAsc);
-        case 'user_id__user_details__phone_number':
-          return this.compare(
-            a['user_id__user_details__phone_number'],
-            b['user_id__user_details__phone_number'],
+            a['category_description'],
+            b['category_description'],
             isAsc
           );
         default:
@@ -166,18 +173,17 @@ export class OrganizationUserlistComponent implements OnInit {
   compare(a: number | string, b: number | string, isAsc: boolean) {
     return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
   }
-
   all(value: boolean) {
     console.log('all value', value);
     this.allChecked = value;
-    this.orgMemberList = this.orgMemberList.map((m: any) => ({
+    this.categoryListInfo = this.categoryListInfo.map((m: any) => ({
       ...m,
       checked: value,
     }));
-    console.log('orgMemberList checkbox::::::::', this.orgMemberList);
+    console.log('categoryListInfo checkbox::::::::', this.categoryListInfo);
     console.log('allChecked', this.allChecked);
     if (this.allChecked && this.allChecked === true) {
-      this.checkboxSelectValueList = this.orgMemberList;
+      this.checkboxSelectValueList = this.categoryListInfo;
     } else {
       this.checkboxSelectValueList = [];
     }

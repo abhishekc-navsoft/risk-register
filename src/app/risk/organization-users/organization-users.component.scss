@@ -1,0 +1,14 @@
+.tablerowHeight{
+    height: 200px;
+}
+.table table-sm {
+    border: 1px solid #ddd;
+}
+.inner_table_row{
+    border: 1px solid #ddd;
+    max-height: 100px;
+        overflow: auto;
+}
+.inner_table_head{
+    border: 1px solid #ddd;
+}
